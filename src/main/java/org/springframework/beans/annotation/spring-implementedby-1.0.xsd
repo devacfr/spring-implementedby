@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns="http://www.springframework.org/schema/implementedby"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://www.springframework.org/schema/implementedby"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+
+	<xsd:annotation>
+		<xsd:documentation><![CDATA[
+			Defines the configuration elements for the Spring Framework's application
+			context support. Effects the activation of various configuration styles
+			for the containing Spring ApplicationContext.
+		]]></xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="annotation-config">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[
+
+			]]></xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+</xsd:schema>
