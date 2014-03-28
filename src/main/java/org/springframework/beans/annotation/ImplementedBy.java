@@ -22,10 +22,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation enabling the autowire injection of default implementation 
+ * if no bean definition exists in 
  * @author devacfr<christophefriederich@mac.com>
- *
+ * @since 1.0
  */
-@Target({ ElementType.FIELD })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ImplementedBy {

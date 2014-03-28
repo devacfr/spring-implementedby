@@ -15,24 +15,36 @@
  */
 package org.springframework.beans.annotation;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import javax.inject.Inject;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * {@link org.springframework.beans.factory.xml.NamespaceHandler}
- * for the '<code>implementedby</code>' namespace.
  * @author devacfr<christophefriederich@mac.com>
- * @since 1.0
+ *
  */
-public class ImplementedByNamespaceHandler extends NamespaceHandlerSupport {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration()
+public class ImplementedByWithFieldTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init() {
+    @Inject
+    private Interface field;
 
-        registerBeanDefinitionParser("annotation-config", new ImplementedByConfigBeanDefinitionParser());
+    @Test
+    public void injectTest() {
+        Assert.assertNotNull(field);
+    }
+
+    @ImplementedBy(DefaultImplementation.class)
+    public interface Interface {
 
     }
 
+    public static class DefaultImplementation implements Interface {
+
+    }
 }

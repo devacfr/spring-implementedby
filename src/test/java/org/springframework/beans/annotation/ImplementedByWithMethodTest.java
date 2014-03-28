@@ -15,6 +15,8 @@
  */
 package org.springframework.beans.annotation;
 
+import javax.inject.Inject;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,16 +29,24 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ImplementedByTest {
+public class ImplementedByWithMethodTest {
 
-    @ImplementedBy(DefaultImplementation.class)
     private Interface field;
+
+    /**
+     * @param field the field to set
+     */
+    @Inject
+    public void setField(Interface field) {
+        this.field = field;
+    }
 
     @Test
     public void injectTest() {
         Assert.assertNotNull(field);
     }
 
+    @ImplementedBy(DefaultImplementation.class)
     public interface Interface {
 
     }

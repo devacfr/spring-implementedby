@@ -23,22 +23,17 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.parsing.CompositeComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.context.annotation.AnnotationConfigBeanDefinitionParser;
+import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.w3c.dom.Element;
 
 /**
- * 
+ * This class allows adding {@link ImplementedBy} annotation in annotation postprocessing.
  * @author devacfr<christophefriederich@mac.com>
- *
+ * @since 1.0
  */
-public class ImplementedByConfigBeanDefinitionParser implements BeanDefinitionParser {
-
-    /**
-     * registring bean name of {@link ImplementedByAnnotationBeanPostProcessor}.
-     */
-    public static final String IMPLEMENTED_BY_ANNOTATION_BEAN_POSTPROCESSOR_NAME =
-            ImplementedByAnnotationBeanPostProcessor.class.getCanonicalName();
+public class ImplementedByConfigBeanDefinitionParser extends AnnotationConfigBeanDefinitionParser {
 
     /**
      * {@inheritDoc}
@@ -49,23 +44,24 @@ public class ImplementedByConfigBeanDefinitionParser implements BeanDefinitionPa
 
         BeanDefinitionHolder holder = null;
         BeanDefinitionRegistry registry = parserContext.getRegistry();
-        if (!registry.containsBeanDefinition(IMPLEMENTED_BY_ANNOTATION_BEAN_POSTPROCESSOR_NAME)) {
-            RootBeanDefinition def = new RootBeanDefinition(ImplementedByAnnotationBeanPostProcessor.class);
+        if (!registry.containsBeanDefinition(AnnotationConfigUtils.AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+            String name = AnnotationConfigUtils.AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME;
+            RootBeanDefinition def = new RootBeanDefinition(ExtendAutowiredAnnotationBeanPostProcessor.class);
             def.setSource(source);
-            holder = registerPostProcessor(registry, def, IMPLEMENTED_BY_ANNOTATION_BEAN_POSTPROCESSOR_NAME);
-        }
+            holder = registerPostProcessor(registry, def, name);
 
-        // Register component for the surrounding <implementedby:annotation-config> element.
-        CompositeComponentDefinition compDefinition = new CompositeComponentDefinition(element.getTagName(), source);
-        parserContext.pushContainingComponent(compDefinition);
+            // Registers component for the surrounding <implementedby:annotation-config> element.
+            CompositeComponentDefinition compDefinition =
+                    new CompositeComponentDefinition(element.getTagName(), source);
+            parserContext.pushContainingComponent(compDefinition);
+        }
 
         // Nest the concrete beans in the surrounding component.
         if (holder != null) {
             parserContext.registerComponent(new BeanComponentDefinition(holder));
         }
 
-        // Finally register the composite component.
-        parserContext.popAndRegisterContainingComponent();
+        super.parse(element, parserContext);
 
         return null;
     }
