@@ -64,14 +64,14 @@
         <organization.name>devacfr</organization.name>
         <organization.url>http://devacfr.github.io</organization.url>
 
-        <issue.url>https://github.com/devacfr/implementedby/issues</issue.url>
+        <issue.url>https://github.com/devacfr/spring-implementedby/issues</issue.url>
 
         <distribution.releaseRepositoryId>bintray</distribution.releaseRepositoryId>
-        <distribution.releaseRepositoryUrl>https://api.bintray.com/maven/devacfr/maven/implementedby</distribution.releaseRepositoryUrl>
+        <distribution.releaseRepositoryUrl>https://api.bintray.com/maven/devacfr/maven/spring-implementedby</distribution.releaseRepositoryUrl>
 
         <CI.system>Travis</CI.system>
         <CI.contact-admin>christophefriederich@mac.om</CI.contact-admin>
-        <CI.url>https://travis-ci.org/devacfr/implementedby</CI.url>
+        <CI.url>https://travis-ci.org/devacfr/spring-implementedby</CI.url>
     </properties>
 
     <prerequisites>
