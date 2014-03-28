@@ -3,7 +3,7 @@ spring-implementedby
 
 This is implementation of **@ImplementedBy** annotation for SpringFramework 3.x (like Guice).
 
-## Using ?
+## Using
 
 If a class need injected a certain type but isn't explicit declared in spring context and no in scope of package scanning, the injector will attempt to a **Just-In-Time binding** (or  JIT bindings and implicit bindings).
 
