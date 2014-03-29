@@ -1,15 +1,13 @@
 spring-implementedby
 ====================
 
-This is implementation of **@ImplementedBy** annotation for SpringFramework 3.x (like Guice).
+If you want that a class needs a certain injected type but isn't explicit declared in context and no in scope of package scanning.
+
+**@ImplementedBy** annotation is your solution for SpringFramework 3.x. the injector will attempt to a **Just-In-Time binding** (JIT bindings or implicit bindings). This is based on same Guice feature. 
 
 ## Using
 
-If a class need injected a certain type but isn't explicit declared in spring context and no in scope of package scanning, the injector will attempt to a **Just-In-Time binding** (or  JIT bindings and implicit bindings).
-
-**@ImplementedBy** annotation enables implicit bindings in Springframework. for this, this library overrides the default spring autowire annotation post-process. You have to change the autowiring in your spring context file or add manually `ExtendAutowiredAnnotationBeanPostProcessor` using method `addBeanPostProcessor(beanPostProcessor)` in bean factory.
-
-This allows declaring a default implementation for specific interface, abstract class ; more generally a no final class.
+In general, **@ImplementedBy** allows declaring a default implementation for specific interface or class. Here is a example how using implicit binding. First, declare the default class on an interface :
 
 	@ImplementedBy(MemoryCache.class)
 	public interface Cache {
@@ -25,24 +23,37 @@ This allows declaring a default implementation for specific interface, abstract 
 	    void put(@Nonnull Object key, @Nonnull Object value);
 	}
 
-Above example, **@ImplementedBy** annotation inform spring using `MemoryCache` class as default implementation unless exists declared bean implementing the `Cache` interface.
+After, let's Spring working:
 
-### Maven Repository
+	public class DefaultUserService implements UserService {
+	
+	    private final Cache cache;
+	    private final UserStore userStore;
 
-This library is in the bintray repository. Add in your *pom.xml* or *setting.xml*
+	    @Autowired(required=true)
+	    public UserService(@Nonnull final Cache cache, @Nonnull final UserStore userStore) {
+	        this.cache = notNull(cache, "cache is required");
+	        this.userStore = noNull(userStore, "userStore is required");	    }	}
 
-	<repositories>
-	    <repository>
-	        <id>bintray</id>
-	        <url>http://dl.bintray.com/devacfr/maven</url>
-	        <releases>
-	            <enabled>true</enabled>
-	        </releases>
-	        <snapshots>
-	            <enabled>false</enabled>
-	        </snapshots>
-	    </repository>
-	</repositories>
+Above example, **@ImplementedBy** annotation informs spring using `MemoryCache` class as default implementation unless exists declared bean implementing the `Cache` interface. This simplifies a certain implementation like:
+
+	public class DefaultUserService implements UserService {
+	
+	    private Cache cache;
+	    private final UserStore userStore;
+
+	    @Autowired()
+	    public UserService(@Nullable Cache cache, @Nonnull final UserStore userStore) {
+	        this.cache = cache;
+	        this.userStore = noNull(userStore, "userStore is required");	    }
+	    
+	   @PostConstruct()
+	   public void afterInitialize() {
+	   	if (this.cache == null) {
+	   		this.cache = new MemoryCache();	   	}	   }	}
+
+
+**@ImplementedBy** annotation enables implicit bindings in Springframework. For this, this library overrides the default spring autowire annotation post-process. You have to change the autowiring in your spring context file or add manually `ExtendAutowiredAnnotationBeanPostProcessor` using method `addBeanPostProcessor(beanPostProcessor)` in bean factory.
 
 ### Configuration Spring Context File
 
@@ -64,9 +75,32 @@ You are need declare the xml namespace `xmlns:implementedby="http://www.springfr
 	    <implementedby:annotation-config />
 	</beans>****
 
+### Maven Repository
+
+This library is in the bintray repository. Add in your *pom.xml* or *setting.xml*
+
+	<repositories>
+	    <repository>
+	        <id>bintray</id>
+	        <url>http://dl.bintray.com/devacfr/maven</url>
+	        <releases>
+	            <enabled>true</enabled>
+	        </releases>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository>
+	</repositories>
+
+
 ## Why ?
 
-This annotation can be useful to inject default spi implementation in api or declare a default test implementation...
+**@ImplementedBy** annotation is useful feature, but great power involves great responsibility. Begining of development, I said me "why limits only this annotation to target type?", so I implemented all target (field, method, constructor, parameter...) and after done all tests, I did some soul-searching:
+
+* What's append if  the code references same default implementation in several places and how take avantage of qualifier (naming) ?
+* @Autowired (@Inject) became obsolete. Why not ? (ridiculous)
+*  But if I implement like Guice and I reduce scope to type, I can't annotate interface of other libraries. Is it useful ? Can I do some other way ?
+
 
 ## Contribution Policy
 
